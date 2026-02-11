@@ -1,0 +1,8 @@
+{
+  "title": "Ozzium Knowledge Vault",
+  "include_extensions": [".md"],
+  "exclude_folders": [".git", ".github", "tools", "node_modules", "__pycache__"],
+  "max_recent_files": 15,
+  "generated_section_marker": "## 🧠 Auto-Generated Codex",
+  "vault_root_links": true
+}
