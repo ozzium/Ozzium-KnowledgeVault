@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("build","open","status","help")]
+  [ValidateSet("build","open","status","listen","help")]
   [string]$Action = "help",
   [string]$VaultPath = ""
 )
@@ -21,6 +21,16 @@ function Resolve-VaultPath {
 }
 
 $root = Resolve-VaultPath $VaultPath
+function Raven-Say {
+  param([string]$Text)
+  try {
+    Add-Type -AssemblyName System.Speech
+    $s = New-Object System.Speech.Synthesis.SpeechSynthesizer
+    $s.Speak($Text)
+  } catch {
+    # If speech isn't available, fail silently
+  }
+}
 
 switch ($Action) {
   "build" {
