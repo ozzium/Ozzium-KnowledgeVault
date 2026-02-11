@@ -179,26 +179,30 @@ def main():
         vault_root = find_vault_root(os.getcwd())
 
     cfg = load_config(vault_root)
-    files = scan_markdown_files(vault_root, cfg)
-    tasks = extract_tasks(vault_root, files, cfg)
-    print(f"[debug] files scanned: {len(files)} | tasks found: {len(tasks)}")
-    section = generate_section(cfg, files, tasks)
-    readme_path = os.path.join(vault_root, "README.md")
+files = scan_markdown_files(vault_root, cfg)
+tasks = extract_tasks(vault_root, files, cfg)
 
-    # Create README if it doesn't exist
-    if not os.path.exists(readme_path):
-        with open(readme_path, "w", encoding="utf-8") as f:
-            f.write(
-                "# Ozzium Knowledge Vault\n\n"
-                "## 🧠 Auto-Generated Codex\n\n"
-                "(Placeholder — generated content will appear here)\n"
-            )
+print(f"[debug] files scanned: {len(files)} | tasks found: {len(tasks)}")
 
-    # Now read it safely
-    with open(readme_path, "r", encoding="utf-8") as f:
-        readme = f.read()
+marker = cfg.get("generated_section_marker", "## 🧠 Auto-Generated Codex")
+section = generate_section(cfg, files, tasks)
 
-    print("Codex updated in README.md")
+readme_path = os.path.join(vault_root, "README.md")
+
+# Create README if it doesn't exist
+if not os.path.exists(readme_path):
+    with open(readme_path, "w", encoding="utf-8") as f:
+        f.write("# Ozzium Knowledge Vault\n\n" + marker + "\n\n(Placeholder)\n")
+
+with open(readme_path, "r", encoding="utf-8") as f:
+    readme = f.read()
+
+updated = replace_generated_section(readme, marker, section)
+
+with open(readme_path, "w", encoding="utf-8") as f:
+    f.write(updated)
+
+print("Codex updated in README.md")
 
 if __name__ == "__main__":
     main()
