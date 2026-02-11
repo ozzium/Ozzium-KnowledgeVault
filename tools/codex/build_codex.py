@@ -59,6 +59,36 @@ def scan_markdown_files(vault_root: str, cfg: dict):
     files.sort(key=lambda x: x["mtime"], reverse=True)
     return files
 
+def extract_tasks(vault_root: str, files: list, cfg: dict):
+    max_tasks = int(cfg.get("max_tasks", 25))
+    markers = cfg.get("task_markers", ["TODO", "FIXME"])
+    checkbox_starts = cfg.get("task_checkbox_patterns", ["- [ ]", "* [ ]"])
+
+    tasks = []
+
+    for f in files:
+        path = os.path.join(vault_root, f["rel"].replace("/", os.sep))
+        try:
+            with open(path, "r", encoding="utf-8", errors="ignore") as fh:
+                for i, line in enumerate(fh, start=1):
+                    s = line.strip()
+
+                    # Checkbox tasks
+                    if any(s.startswith(p) for p in checkbox_starts):
+                        tasks.append((f["rel"], i, s))
+                    else:
+                        # Marker tasks (TODO/FIXME anywhere)
+                        upper = s.upper()
+                        if any(m in upper for m in markers):
+                            tasks.append((f["rel"], i, s))
+
+                    if len(tasks) >= max_tasks:
+                        return tasks
+        except OSError:
+            continue
+
+    return tasks
+    
 def md_link(path: str):
     # GitHub-friendly relative link
     return f"[{os.path.basename(path)}]({path})"
