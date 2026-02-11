@@ -174,7 +174,7 @@ def main():
     cfg = load_config(vault_root)
     files = scan_markdown_files(vault_root, cfg)
     tasks = extract_tasks(vault_root, files, cfg)
-
+    section = generate_section(cfg, files, tasks)
     readme_path = os.path.join(vault_root, "README.md")
 
     # Create README if it doesn't exist
