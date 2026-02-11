@@ -4,6 +4,16 @@ import os
 import sys
 from datetime import datetime, timezone
 
+def find_vault_root(start_path: str) -> str:
+    probe = os.path.abspath(start_path)
+    while True:
+        if os.path.exists(os.path.join(probe, "codex.config.json")):
+            return probe
+        parent = os.path.dirname(probe)
+        if parent == probe:
+            break
+        probe = parent
+    raise FileNotFoundError("Could not find codex.config.json in this folder or any parent folder.")
 def load_config(vault_root: str):
     cfg_path = os.path.join(vault_root, "codex.config.json")
     with open(cfg_path, "r", encoding="utf-8") as f:
