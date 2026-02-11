@@ -115,41 +115,48 @@ def generate_section(cfg: dict, files: list, tasks: list):
     lines.append("")
     lines.append(f"**Last generated:** {now}")
     lines.append("")
+
+    # Recently updated
     lines.append("#### 🔥 Recently Updated")
-    lines.append("#### ✅ Open Tasks (harvested)")
-if not tasks:
-    lines.append("- (No TODO/FIXME or unchecked tasks found.)")
-else:
-    for rel, ln, text in tasks:
-        # nice clickable line link in GitHub: path#Lx
-        link = f"[{os.path.basename(rel)}]({rel}#L{ln})"
-        lines.append(f"- {link}: {text}")
-lines.append("")
     if not recent:
         lines.append("- (No markdown files found yet.)")
     else:
         for f in recent:
             ts = datetime.fromtimestamp(f["mtime"], tz=timezone.utc).strftime("%Y-%m-%d")
-lines.append(f"- {md_link(f['rel'])} — {ts} · {f['size']} bytes")
-            lines.append("")
-            lines.append("#### 🗂️ Modules")
+            lines.append(f"- {md_link(f['rel'])} — {ts} · {f['size']} bytes")
+    lines.append("")
+
+    # Task harvesting
+    lines.append("#### ✅ Open Tasks (harvested)")
+    if not tasks:
+        lines.append("- (No TODO/FIXME or unchecked tasks found.)")
+    else:
+        for rel, ln, text in tasks:
+            link = f"[{os.path.basename(rel)}]({rel}#L{ln})"
+            lines.append(f"- {link}: {text}")
+    lines.append("")
+
+    # Modules
+    lines.append("#### 🗂️ Modules")
     for top in sorted(grouped.keys()):
         if top in ("tools", ".github", ".git", "__pycache__", "node_modules"):
             continue
         if top == "(root)":
-            # root files (like README.md) are covered elsewhere; keep minimal
             continue
-        # show a short list per module
+
         module_files = grouped[top][:8]
         lines.append(f"- **{top}/**")
         for mf in module_files:
             lines.append(f"  - {md_link(mf['rel'])}")
     lines.append("")
+
+    # Quick start
     lines.append("#### 🧭 Quick Start")
     lines.append("- Add new notes anywhere under a module folder.")
     lines.append("- Commit/push → GitHub Action regenerates this Codex automatically.")
     lines.append("- Or run locally: `python tools/codex/build_codex.py`")
     lines.append("")
+
     return "\n".join(lines)
 
 def replace_generated_section(readme_text: str, marker: str, new_block: str):
