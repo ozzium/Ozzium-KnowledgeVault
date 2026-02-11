@@ -133,7 +133,7 @@ else:
             lines.append(f"- {md_link(f['rel'])} — {ts} · {f['size']} bytes")
             lines.append("")
             lines.append("#### 🗂️ Modules")
-    for top in sorted(grouped.keys()):
+for top in sorted(grouped.keys()):
         if top in ("tools", ".github", ".git", "__pycache__", "node_modules"):
             continue
         if top == "(root)":
