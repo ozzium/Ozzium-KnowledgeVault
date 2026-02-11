@@ -126,15 +126,14 @@ def replace_generated_section(readme_text: str, marker: str, new_block: str):
     return prefix + "\n\n" + marker + "\n\n" + new_block + "\n"
 
 def main():
-    vault_root = os.getcwd()
+    # If user passed a vault root, use it; otherwise auto-detect
     if len(sys.argv) > 1:
-        vault_root = sys.argv[1]
+        vault_root = os.path.abspath(sys.argv[1])
+    else:
+        vault_root = find_vault_root(os.getcwd())
 
     cfg = load_config(vault_root)
     files = scan_markdown_files(vault_root, cfg)
-
-    marker = cfg.get("generated_section_marker", "## 🧠 Auto-Generated Codex")
-    section = generate_section(cfg, files)
 
     readme_path = os.path.join(vault_root, "README.md")
 
