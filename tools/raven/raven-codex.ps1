@@ -33,6 +33,53 @@ function Raven-Say {
 }
 
 switch ($Action) {
+		"listen" {
+	  Raven-Say "Raven is listening. Say update codex, open codex, status, or stop listening."
+
+	  Add-Type -AssemblyName System.Speech
+	  $rec = New-Object System.Speech.Recognition.SpeechRecognitionEngine
+	  $choices = New-Object System.Speech.Recognition.Choices
+	  $choices.Add(@("update codex","open codex","status","stop listening"))
+
+	  $gb = New-Object System.Speech.Recognition.GrammarBuilder
+	  $gb.Append($choices)
+	  $grammar = New-Object System.Speech.Recognition.Grammar($gb)
+
+	  $rec.LoadGrammar($grammar)
+	  $rec.SetInputToDefaultAudioDevice()
+	  $rec.RecognizeTimeout = New-TimeSpan -Seconds 10
+
+	  while ($true) {
+		Write-Host "🎙️ Listening..." -ForegroundColor Cyan
+		$result = $rec.Recognize()
+		if (-not $result) { continue }
+
+		$spoken = $result.Text.ToLowerInvariant()
+		Write-Host "🗣️ Heard: $spoken" -ForegroundColor DarkCyan
+
+		switch ($spoken) {
+		  "update codex" {
+			Raven-Say "Updating codex."
+			python (Join-Path $root "tools\codex\build_codex.py") $root
+			Raven-Say "Codex updated."
+		  }
+		  "open codex" {
+			Raven-Say "Opening codex."
+			Start-Process (Join-Path $root "README.md")
+		  }
+		  "status" {
+			Raven-Say "Checking status."
+			Push-Location $root
+			git status
+			Pop-Location
+		  }
+		  "stop listening" {
+			Raven-Say "Stopping."
+			break
+		  }
+		}
+	  }
+	}
   "build" {
     Write-Host "🧠 Raven: generating Codex..." -ForegroundColor Cyan
     python (Join-Path $root "tools\codex\build_codex.py") $root
