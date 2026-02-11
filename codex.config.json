@@ -3,9 +3,9 @@
   "include_extensions": [".md"],
   "exclude_folders": [".git", ".github", "tools", "node_modules", "__pycache__"],
   "max_recent_files": 15,
-   "max_tasks": 25,
+  "generated_section_marker": "## ?? Auto-Generated Codex",
+  "vault_root_links": true,
+  "max_tasks": 25,
   "task_markers": ["TODO", "FIXME"],
   "task_checkbox_patterns": ["- [ ]", "* [ ]"]
-  "generated_section_marker": "## 🧠 Auto-Generated Codex",
-  "vault_root_links": true
 }
