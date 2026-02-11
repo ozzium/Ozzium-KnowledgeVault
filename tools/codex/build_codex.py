@@ -127,13 +127,19 @@ def main():
     section = generate_section(cfg, files)
 
     readme_path = os.path.join(vault_root, "README.md")
+
+    # Create README if it doesn't exist
+    if not os.path.exists(readme_path):
+        with open(readme_path, "w", encoding="utf-8") as f:
+            f.write(
+                "# Ozzium Knowledge Vault\n\n"
+                "## 🧠 Auto-Generated Codex\n\n"
+                "(Placeholder — generated content will appear here)\n"
+            )
+
+    # Now read it safely
     with open(readme_path, "r", encoding="utf-8") as f:
         readme = f.read()
-
-    updated = replace_generated_section(readme, marker, section)
-
-    with open(readme_path, "w", encoding="utf-8") as f:
-        f.write(updated)
 
     print("Codex updated in README.md")
 
