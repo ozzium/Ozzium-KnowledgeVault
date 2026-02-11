@@ -101,7 +101,7 @@ def group_by_top_folder(files):
         grouped.setdefault(top, []).append(f)
     return grouped
 
-def generate_section(cfg: dict, files: list):
+def generate_section(cfg: dict, files: list, tasks: list):
     title = cfg.get("title", "Vault")
     max_recent = int(cfg.get("max_recent_files", 15))
 
@@ -164,6 +164,7 @@ def main():
 
     cfg = load_config(vault_root)
     files = scan_markdown_files(vault_root, cfg)
+    tasks = extract_tasks(vault_root, files, cfg)
 
     readme_path = os.path.join(vault_root, "README.md")
 
