@@ -125,14 +125,14 @@ else:
         link = f"[{os.path.basename(rel)}]({rel}#L{ln})"
         lines.append(f"- {link}: {text}")
 lines.append("")
-    if not recent:
+if not recent:
         lines.append("- (No markdown files found yet.)")
-    else:
+else:
         for f in recent:
             ts = datetime.fromtimestamp(f["mtime"], tz=timezone.utc).strftime("%Y-%m-%d")
             lines.append(f"- {md_link(f['rel'])} — {ts} · {f['size']} bytes")
-    lines.append("")
-    lines.append("#### 🗂️ Modules")
+            lines.append("")
+            lines.append("#### 🗂️ Modules")
     for top in sorted(grouped.keys()):
         if top in ("tools", ".github", ".git", "__pycache__", "node_modules"):
             continue
