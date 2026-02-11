@@ -116,6 +116,15 @@ def generate_section(cfg: dict, files: list, tasks: list):
     lines.append(f"**Last generated:** {now}")
     lines.append("")
     lines.append("#### 🔥 Recently Updated")
+    lines.append("#### ✅ Open Tasks (harvested)")
+if not tasks:
+    lines.append("- (No TODO/FIXME or unchecked tasks found.)")
+else:
+    for rel, ln, text in tasks:
+        # nice clickable line link in GitHub: path#Lx
+        link = f"[{os.path.basename(rel)}]({rel}#L{ln})"
+        lines.append(f"- {link}: {text}")
+lines.append("")
     if not recent:
         lines.append("- (No markdown files found yet.)")
     else:
